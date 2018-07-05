@@ -1,4 +1,4 @@
-version: '3.2'
+version: '3.2' #compose docker compatility version
 volumes:
   postgres-data:
 services:
@@ -8,16 +8,23 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   app:
-    build:
-      context: .
+    build: #Configuration options that are applied at build time.
+      context: . #either a path to a directory with a dockerfile or git repo url
       dockerfile: Dockerfile
-    command: foreman start -f Procfile.dev -p 3000
+    command: foreman start -f Procfile.dev -p 3000 #using foreman gem
     volumes:
       - .:/project
       - type: tmpfs
         target: /project/tmp/pids/
-    ports:
+    ports: #port mapping from container to host
       - "3000:3000"
       - "35729:35729"
-    depends_on:
+    depends_on: #launch listed services first before app
       - db
+
+
+#commands to build container
+#docker-compose up --build
+#docker-compose run --user $(id -u):$(id -g) <name of service to run cmd on> rails new .
+#rebuild image when file changes.
+#docker-compose exec app rails db:create
